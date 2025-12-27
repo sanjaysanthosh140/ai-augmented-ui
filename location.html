@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generation Reports</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="location.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="main-layout">
+        <!-- Top Filter Bar -->
+        <header class="top-bar">
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" placeholder="Please enter plant / SN / email" class="search-input">
+            </div>
+
+            <div class="filters-container">
+                <div class="dropdown-wrapper">
+                    <i class="fa-regular fa-file-lines input-icon"></i>
+                    <select class="custom-select">
+                        <option>Monthly Report</option>
+                        <option>Daily Report</option>
+                        <option>Annual Report</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                </div>
+
+                <div class="date-wrapper">
+                    <i class="fa-regular fa-calendar input-icon"></i>
+                    <input type="text" value="11.2025" class="date-input">
+                </div>
+            </div>
+
+            <div class="actions-container">
+                <button class="btn-generate">Generate Report</button>
+                <button class="btn-export">Export</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="content-grid">
+            <div class="report-view">
+                <div class="empty-illustration-container">
+                    <i class="fa-regular fa-clipboard" style="font-size: 100px; color: #e0e0e0;"></i>
+                </div>
+
+                <div class="report-section">
+                    <div class="section-header">Monthly Report</div>
+                    <div class="no-data-row">No Data</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Plant Selection Modal -->
+        <div class="modal-overlay" id="location-modal-overlay">
+            <div class="location-selection-modal">
+                <div class="ls-header">
+                    <h3>Location Selection</h3>
+                </div>
+
+                <div class="ls-body">
+                    <div class="ls-helper-box">
+                        Click on location to access sub-level<br>
+                        Move the mouse in and click the icon <i class="fa-regular fa-file"
+                            style="color: #00bfa5;"></i><i class="fa-solid fa-plus"
+                            style="font-size: 8px; vertical-align: top; color: #00bfa5;"></i> to
+                        select the location
+                    </div>
+
+                    <div class="ls-breadcrumb-bar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span id="ls-current-path" style="color: #999;">Global/India/Kerala/Kannur</span>
+                    </div>
+
+                    <div class="ls-panels-container">
+                        <!-- Left Panel -->
+                        <div class="ls-panel left-panel">
+                            <div class="ls-list" id="ls-source-list"></div>
+                        </div>
+
+                        <!-- Right Panel -->
+                        <div class="ls-panel right-panel">
+                            <div class="ls-panel-header">
+                                <span>Selected list</span>
+                                <button class="ls-btn-clear" id="ls-btn-clear">Clear All</button>
+                            </div>
+                            <div class="ls-helper-banner">
+                                To cancel the selection, click <i class="fa-regular fa-trash-can"
+                                    style="color: #ff5722;"></i>
+                            </div>
+                            <div class="ls-list" id="ls-selected-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ls-footer">
+                    <button class="ls-btn ls-btn-cancel" id="ls-btn-cancel">Cancel</button>
+                    <button class="ls-btn ls-btn-confirm" id="ls-btn-confirm">Confirm</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                // Data Structure
+                const locationData = {
+                    "Global": {
+                        // Logic: Global might be a parent of others, or just an item?
+                        // User prompt implies: Global, India, Nigeria as peers.
+                    },
+                    "India": {
+                        "Kerala": {
+                            "Kannur": {}, "Kanhangad": {}, "Kumaramputhur": {}, "Malappuram": {},
+                            "Ottappalam": {}, "Palakkad": {}, "Perumbavoor": {}, "Shoranur": {},
+                            "Taliparamba": {}, "Thalassery": {}
+                        },
+                        "Tamil Nadu": { "Chennai": {}, "Coimbatore": {} }
+                    },
+                    "Nigeria": {
+                        "Lagos": { "Ikeja": {}, "Epe": {} },
+                        "Kano": {}
+                    }
+                };
+
+                // Current Navigation Path (e.g., ['India', 'Kerala'])
+                // Root level is empty array [] -> Shows keys of locationData
+                let currentPath = [];
+                let selectedPaths = new Set();
+
+                // Elements
+                const modal = document.getElementById('location-modal-overlay');
+                const searchInput = document.querySelector('.search-input');
+                const btnCancel = document.getElementById('ls-btn-cancel');
+                const btnConfirm = document.getElementById('ls-btn-confirm');
+                const sourceListEl = document.getElementById('ls-source-list');
+                const selectedListEl = document.getElementById('ls-selected-list');
+                const currentPathEl = document.getElementById('ls-current-path');
+                const btnClear = document.getElementById('ls-btn-clear');
+
+                // --- Interactions ---
+                searchInput.addEventListener('click', () => {
+                    modal.classList.add('show');
+                    renderView();
+                    renderSelectedList();
+                });
+                btnCancel.addEventListener('click', () => modal.classList.remove('show'));
+                btnConfirm.addEventListener('click', () => modal.classList.remove('show'));
+                btnClear.addEventListener('click', () => {
+                    selectedPaths.clear();
+                    renderSelectedList();
+                });
+
+                // --- Rendering Logic ---
+                function renderView() {
+                    sourceListEl.innerHTML = '';
+
+                    // 1. Render Root Row (Level 0)
+                    // Keys: Global, India, Nigeria
+                    renderRow(locationData, 0, null);
+
+                    // 2. Render subsequent rows based on selection
+                    let pointer = locationData;
+                    for (let i = 0; i < currentPath.length; i++) {
+                        const selectedKey = currentPath[i];
+
+                        if (pointer && pointer[selectedKey] && Object.keys(pointer[selectedKey]).length > 0) {
+                            pointer = pointer[selectedKey];
+                            // Render this level's children
+                            // Parent Name: selectedKey (e.g. India)
+                            renderRow(pointer, i + 1, selectedKey);
+                        } else {
+                            break;
+                        }
+                    }
+                    updateBreadcrumb();
+                }
+
+                function renderRow(dataObj, levelIndex, parentLabel) {
+                    const rowEl = document.createElement('div');
+                    rowEl.className = 'ls-row';
+
+                    // If this is a sub-level (level > 0), prepend the Parent Label
+                    if (parentLabel) {
+                        const labelEl = document.createElement('div');
+                        labelEl.className = 'ls-parent-label';
+                        labelEl.textContent = parentLabel;
+                        rowEl.appendChild(labelEl);
+                    }
+
+                    // Render Items
+                    const activeKey = currentPath[levelIndex] || null;
+                    const keys = Object.keys(dataObj);
+
+                    keys.forEach(key => {
+                        const itemWrap = document.createElement('div');
+                        itemWrap.className = 'ls-inline-item';
+
+                        // Text
+                        const textEl = document.createElement('span');
+                        textEl.className = 'ls-text';
+                        textEl.textContent = key;
+                        if (key === activeKey) textEl.classList.add('active'); // Green + Bold
+
+                        // Click Text -> Set Path
+                        textEl.onclick = () => {
+                            // Truncate path to this level, then push this key
+                            const newPath = currentPath.slice(0, levelIndex);
+                            // Only drill down if it has children?
+                            // Or always select?
+                            // If it has children, we drill down.
+                            // If we click text, we want to see children.
+                            // Check data
+                            let tempPointer = locationData;
+                            // Walk to current level parent
+                            for (let k = 0; k < levelIndex; k++) tempPointer = tempPointer[currentPath[k]];
+
+                            if (tempPointer[key] && Object.keys(tempPointer[key]).length > 0) {
+                                newPath.push(key);
+                                currentPath = newPath;
+                                renderView();
+                            } else {
+                                // Leaf node click: Maybe just select active style?
+                                // User wants to see structure. Leaf node text click does nothing or selects?
+                                // Usually text click = Navigate. Icon click = Select.
+                                // If leaf, maybe just highlight.
+                                // For now, let's update path so it shows up as active text.
+                                newPath.push(key);
+                                currentPath = newPath;
+                                renderView();
+                            }
+                        };
+
+                        // Icon (Add) - Only show if Active? Or show on hover? 
+                        // Image shows: "India" (Green, Icon), "Kerala" (Green, Icon)
+                        // "Nigeria" (Grey, No Icon).
+                        // So ONLY the Active/Selected item gets the Icon.
+
+                        if (key === activeKey) {
+                            const iconEl = document.createElement('div');
+                            iconEl.className = 'ls-icon-btn';
+                            iconEl.innerHTML = `<i class="fa-regular fa-file"></i><i class="fa-solid fa-plus icon-plus"></i>`;
+                            iconEl.onclick = (e) => {
+                                e.stopPropagation();
+                                // Add to right list
+                                const nodePath = currentPath.slice(0, levelIndex);
+                                nodePath.push(key);
+                                addToSelection(nodePath);
+                            };
+                            itemWrap.appendChild(textEl);
+                            itemWrap.appendChild(iconEl);
+                        } else {
+                            // Inactive items: Just Text (Grey)
+                            itemWrap.appendChild(textEl);
+                            // Maybe show icon on hover? 
+                            // Image doesn't show icon on inactive items.
+                            // But user manual says "Move mouse in and click icon".
+                            // So icon appears on hover?
+                            // Use CSS for hover effect, but here we inject DOM.
+                            // Let's hide icon via CSS and show on hover/active.
+                            const hiddenIcon = document.createElement('div');
+                            hiddenIcon.className = 'ls-icon-btn hidden-icon';
+                            hiddenIcon.innerHTML = `<i class="fa-regular fa-file"></i><i class="fa-solid fa-plus icon-plus"></i>`;
+                            hiddenIcon.onclick = (e) => {
+                                e.stopPropagation();
+                                // Logic to add inactive item:
+                                // We must construct path: currentPath(0..level) + key
+                                // But wait, if I am at Root, taking "Global", path is Global.
+                                let p = currentPath.slice(0, levelIndex);
+                                p.push(key);
+                                addToSelection(p);
+                            };
+                            itemWrap.appendChild(hiddenIcon);
+                        }
+
+                        rowEl.appendChild(itemWrap);
+                    });
+
+                    sourceListEl.appendChild(rowEl);
+                }
+
+                function updateBreadcrumb() {
+                    // If path is empty, maybe placeholder
+                    if (currentPath.length === 0) {
+                        currentPathEl.textContent = 'Global/India/Kerala...';
+                        currentPathEl.style.color = '#ccc';
+                    } else {
+                        currentPathEl.textContent = currentPath.join('/');
+                        currentPathEl.style.color = '#333';
+                    }
+                }
+
+                function addToSelection(pathArr) {
+                    const str = pathArr.join('/');
+                    if (!selectedPaths.has(str)) {
+                        selectedPaths.add(str);
+                        renderSelectedList();
+                    }
+                }
+
+                function renderSelectedList() {
+                    selectedListEl.innerHTML = '';
+                    selectedPaths.forEach(path => {
+                        const div = document.createElement('div');
+                        div.className = 'selected-row';
+                        div.innerHTML = `<span>${path}</span> <i class="fa-regular fa-trash-can del-btn"></i>`;
+                        div.querySelector('.del-btn').onclick = () => {
+                            selectedPaths.delete(path);
+                            renderSelectedList();
+                        };
+                        selectedListEl.appendChild(div);
+                    });
+                }
+            });
+        </script>
+</body>
+
+</html>
