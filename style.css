@@ -1,0 +1,294 @@
+/* Basic Reset & Font */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f7fa;
+    /* Light grey background */
+    color: #333;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+header {
+    background-color: #2c3e50;
+    /* Dark blue/slate header */
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Main Layout */
+.main-wrapper {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Search Bar */
+.search-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.search-container i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+.search-container input {
+    width: 100%;
+    /* Or max-width as per design */
+    padding: 10px 10px 10px 40px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+    max-width: 350px;
+}
+
+.search-container input::placeholder {
+    color: #ccc;
+}
+
+/* Panels */
+.panels-container {
+    display: flex;
+    flex: 1;
+    gap: 20px;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    min-height: 400px;
+}
+
+.panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #eee;
+}
+
+.panel:last-child {
+    border-right: none;
+}
+
+.panel-header {
+    padding: 15px 20px;
+    font-weight: 500;
+    font-size: 15px;
+    border-bottom: 1px dashed #eee;
+    /* As seen in image 2 */
+}
+
+.panel-content {
+    flex: 1;
+    padding: 10px 0;
+    overflow-y: auto;
+}
+
+/* Scrollbar styling for webkit */
+.panel-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.panel-content::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 3px;
+}
+
+/* Items in Left Panel */
+.plant-item {
+    font-size: 14px;
+}
+
+.plant-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    cursor: pointer;
+    color: #666;
+    transition: background 0.2s;
+    position: relative;
+}
+
+.plant-header:hover {
+    background-color: #f9f9f9;
+}
+
+.plant-header .arrow-icon {
+    font-size: 10px;
+    margin-right: 15px;
+    width: 10px;
+    color: #999;
+    transition: transform 0.2s;
+}
+
+.plant-name {
+    font-weight: 500;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #4a6da7;
+    /* Example blue dot */
+    border-radius: 50%;
+    margin-left: 10px;
+    display: inline-block;
+}
+
+/* Expanded State */
+.plant-item.active .plant-header .arrow-icon {
+    transform: rotate(90deg);
+}
+
+.plant-details {
+    display: none;
+    padding: 10px 20px 10px 45px;
+    /* Indented */
+    background-color: #f8fcfd;
+    /* Very light cyan tint as bg for active item? */
+}
+
+.plant-item.active .plant-details {
+    display: block;
+}
+
+/* Inverter Detail Row */
+.inverter-row {
+    display: flex;
+    align-items: flex-end;
+    /* Align bottom so icon matches input */
+    justify-content: space-between;
+}
+
+.inverter-info {
+    flex: 1;
+}
+
+.inverter-model {
+    color: #666;
+    margin-bottom: 5px;
+    font-size: 13px;
+}
+
+.inverter-sn {
+    width: 100%;
+    max-width: 180px;
+    padding: 5px 8px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    color: #ccc;
+    /* Disabled text color */
+    font-size: 12px;
+    background: white;
+    outline: none;
+}
+
+.add-icon {
+    color: #00bcd4;
+    /* Cyan color */
+    font-size: 18px;
+    cursor: pointer;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    /* Adjust alignment with input */
+}
+
+.add-icon:hover {
+    color: #00a0b2;
+}
+
+/* Right Panel Items */
+.selected-item {
+    padding: 10px 20px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.selected-info {
+    flex: 1;
+}
+
+.selected-model {
+    color: #666;
+    margin-bottom: 5px;
+    font-size: 13px;
+}
+
+.selected-sn {
+    width: 100%;
+    max-width: 180px;
+    padding: 5px 8px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    color: #ccc;
+    font-size: 12px;
+    background: white;
+    outline: none;
+}
+
+.delete-icon {
+    color: #ff8a65;
+    /* Orange/Peach color */
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 10px;
+    margin-bottom: 5px;
+}
+
+.delete-icon:hover {
+    color: #e64a19;
+}
+
+/* Footer Buttons */
+.footer-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 10px 40px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    font-weight: 500;
+}
+
+.btn.cancel {
+    background-color: #00bcd4;
+    color: white;
+}
+
+.btn.confirm {
+    background-color: #00bcd4;
+    color: white;
+}
+
+.btn:hover {
+    background-color: #00acc1;
+}

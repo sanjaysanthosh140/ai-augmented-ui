@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inverter Selection</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>Inverter</h1>
+    </header>
+
+    <div class="main-wrapper">
+        <!-- Search Bar -->
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Please enter plant / SN / email">
+        </div>
+
+        <div class="panels-container">
+            <!-- Left Panel: Select Plant -->
+            <div class="panel left-panel">
+                <div class="panel-header">Select plant</div>
+                <div class="panel-content" id="plant-list">
+
+                    <!-- Item 1: BINU (Pre-expanded in logic if needed, but starting closed is standard) -->
+                    <div class="plant-item">
+                        <div class="plant-header" onclick="togglePlant(this)">
+                            <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                            <span class="plant-name">BINU</span>
+                        </div>
+                        <div class="plant-details">
+                            <div class="inverter-row">
+                                <div class="inverter-info">
+                                    <div class="inverter-model">GW3300-XS</div>
+                                    <input type="text" class="inverter-sn" value="53300SSX22BW1357" readonly>
+                                </div>
+                                <i class="fa-solid fa-file-circle-plus add-icon"
+                                    onclick="addToSelected('GW3300-XS', '53300SSX22BW1357')"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="plant-item">
+                        <div class="plant-header" onclick="togglePlant(this)">
+                            <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                            <span class="plant-name">Biju Ramachandran</span>
+                        </div>
+                        <div class="plant-details">
+                            <div class="inverter-row">
+                                <div class="inverter-info">
+                                    <div class="inverter-model">GW5000-MS</div>
+                                    <input type="text" class="inverter-sn" value="998877665544" readonly>
+                                </div>
+                                <i class="fa-solid fa-file-circle-plus add-icon"
+                                    onclick="addToSelected('GW5000-MS', '998877665544')"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="plant-item">
+                        <div class="plant-header" onclick="togglePlant(this)">
+                            <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                            <span class="plant-name">CAPITAL ASSOCIATES</span>
+                        </div>
+                        <div class="plant-details">
+                            <div class="inverter-row">
+                                <div class="inverter-info">
+                                    <div class="inverter-model">GW10K-ET</div>
+                                    <input type="text" class="inverter-sn" value="1122334455" readonly>
+                                </div>
+                                <i class="fa-solid fa-file-circle-plus add-icon"
+                                    onclick="addToSelected('GW10K-ET', '1122334455')"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 4 -->
+                    <div class="plant-item">
+                        <div class="plant-header" onclick="togglePlant(this)">
+                            <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                            <span class="plant-name">DR KASIM</span>
+                        </div>
+                        <div class="plant-details">
+                            <div class="inverter-row">
+                                <div class="inverter-info">
+                                    <div class="inverter-model">GW_TEST_01</div>
+                                    <input type="text" class="inverter-sn" value="SN12345678" readonly>
+                                </div>
+                                <i class="fa-solid fa-file-circle-plus add-icon"
+                                    onclick="addToSelected('GW_TEST_01', 'SN12345678')"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 5 -->
+                    <div class="plant-item">
+                        <div class="plant-header" onclick="togglePlant(this)">
+                            <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                            <span class="plant-name">DR RAVI</span>
+                            <span class="status-dot"></span> <!-- Blue dot in image -->
+                        </div>
+                        <div class="plant-details">
+                            <div class="inverter-row">
+                                <div class="inverter-info">
+                                    <div class="inverter-model">GW_RAVI_01</div>
+                                    <input type="text" class="inverter-sn" value="SN87654321" readonly>
+                                </div>
+                                <i class="fa-solid fa-file-circle-plus add-icon"
+                                    onclick="addToSelected('GW_RAVI_01', 'SN87654321')"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 6 -->
+                    <div class="plant-item">
+                        <div class="plant-header" onclick="togglePlant(this)">
+                            <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                            <span class="plant-name">GIRIJA</span>
+                            <span class="status-dot"></span>
+                        </div>
+                        <div class="plant-details">
+                            <div class="inverter-row">
+                                <div class="inverter-info">
+                                    <div class="inverter-model">GW_GIRIJA_X</div>
+                                    <input type="text" class="inverter-sn" value="SN555666777" readonly>
+                                </div>
+                                <i class="fa-solid fa-file-circle-plus add-icon"
+                                    onclick="addToSelected('GW_GIRIJA_X', 'SN555666777')"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right Panel: Selected List -->
+            <div class="panel right-panel">
+                <div class="panel-header">Selected list</div>
+                <div class="panel-content" id="selected-list">
+                    <!-- Dynamic items will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-buttons">
+            <button class="btn cancel">Cancel</button>
+            <button class="btn confirm">Confirm</button>
+        </div>
+    </div>
+
+    <script>
+        function togglePlant(headerElement) {
+            const plantItem = headerElement.parentElement;
+            plantItem.classList.toggle('active');
+        }
+
+        function addToSelected(model, sn) {
+            const list = document.getElementById('selected-list');
+
+            // Check if already exists to prevent duplicates (optional, but good UX)
+            // For now, I'll allow adding as per simple requirement, or maybe check simple unique ID.
+            const existing = Array.from(list.children).find(item => item.querySelector('.chk-sn').value === sn);
+            if (existing) return;
+
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'selected-item';
+            itemDiv.innerHTML = `
+                <div class="selected-info">
+                    <div class="selected-model">${model}</div>
+                    <input type="text" class="selected-sn chk-sn" value="${sn}" readonly>
+                </div>
+                <i class="fa-regular fa-trash-can delete-icon" onclick="removeSelected(this)"></i>
+            `;
+            list.appendChild(itemDiv);
+        }
+
+        function removeSelected(iconElement) {
+            iconElement.parentElement.remove();
+        }
+    </script>
+</body>
+
+</html>
